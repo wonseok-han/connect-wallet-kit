@@ -1,12 +1,10 @@
 {
-  "name": "@repo/ui",
+  "name": "@repo/hedera-metamask-snap",
   "version": "0.0.0",
   "type": "module",
   "private": true,
   "exports": {
-    "./button": "./src/button.tsx",
-    "./card": "./src/card.tsx",
-    "./code": "./src/code.tsx"
+    "./components": "./src/components/index.tsx"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
