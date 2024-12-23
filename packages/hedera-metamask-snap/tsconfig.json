@@ -4,13 +4,17 @@
     "outDir": "dist",
     "baseUrl": ".",
     "paths": {
-      "@repo/shared/components": [
+      "@repo/hedera-metamask-snap/components": [
         "src/components/index.ts"
+      ],
+      "@repo/hedera-metamask-snap/utils": [
+        "src/utils"
       ],
     }
   },
   "include": [
-    "src"
+    "src",
+    "index.d.ts"
   ],
   "exclude": [
     "node_modules",
