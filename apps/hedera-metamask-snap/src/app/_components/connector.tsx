@@ -95,7 +95,7 @@ const Connector = () => {
   return (
     <div>
       <div className="border rounded-md p-3">
-        <span className="font-semibold">참고 링크</span>
+        <span className="font-semibold">참고</span>
         <Link
           href="https://docs.hedera.com/hedera/open-source-solutions/hedera-wallet-snap-by-metamask"
           target="_blank"
@@ -104,6 +104,14 @@ const Connector = () => {
             https://docs.hedera.com/hedera/open-source-solutions/hedera-wallet-snap-by-metamask
           </p>
         </Link>
+        <ul className="list-disc list-inside">
+          <li>블록체인에 친숙하지 않은 유저들에 대해 사용이 복잡합니다.</li>
+          <li>
+            자신의 헤데라 지갑을 가지고 있으면서 Metamask에 스냅이 추가되며,
+            Transfer시 가스비나 토큰이 스냅에 존재해야합니다. 즉, 관리 포인트가
+            본인의 지갑과 스냅 2개가 됩니다.
+          </li>
+        </ul>
       </div>
       {!account ? (
         <button className="border px-2 py-1" onClick={handleConnectWallet}>
