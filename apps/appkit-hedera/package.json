@@ -1,5 +1,5 @@
 {
-  "name": "web",
+  "name": "appkit-hedera",
   "version": "0.1.0",
   "type": "module",
   "private": true,
@@ -16,7 +16,6 @@
     "@hashgraph/sdk": "^2.56.0",
     "@reown/appkit": "^1.6.3",
     "@reown/appkit-adapter-ethers": "^1.6.3",
-    "@repo/hedera-metamask-snap": "workspace:*",
     "@walletconnect/modal": "^2.7.0",
     "@walletconnect/modal-core": "^2.7.0",
     "@walletconnect/qrcode-modal": "^1.8.0",
