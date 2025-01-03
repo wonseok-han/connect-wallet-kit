@@ -8,7 +8,7 @@ export default function Home() {
         <Connector />
       </main>
       <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        {`wonseok-han's page`}
+        {`© ${new Date().getFullYear()} wonseok-han's page`}
       </footer>
     </div>
   );

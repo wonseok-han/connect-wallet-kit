@@ -6,8 +6,9 @@
     "dev": "turbo dev",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "dev:appkit": "pnpm --filter=appkit-hedera run dev",
-    "dev:snap": "pnpm --filter=hedera-metamask-snap run dev"
+    "dev:appkit": "pnpm --filter=hedera-appkit run dev",
+    "dev:snap": "pnpm --filter=hedera-metamask-snap run dev",
+    "dev:provider": "pnpm --filter=hedera-ethereum-provider run dev"
   },
   "devDependencies": {
     "prettier": "^3.2.5",
