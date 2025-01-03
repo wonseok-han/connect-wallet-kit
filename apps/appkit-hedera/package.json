@@ -11,13 +11,24 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
+    "@hashgraph/hedera-wallet-connect": "^1.4.2",
+    "@hashgraph/proto": "^2.15.0",
+    "@hashgraph/sdk": "^2.56.0",
+    "@reown/appkit": "^1.6.3",
+    "@reown/appkit-adapter-ethers": "^1.6.3",
     "@repo/hedera-metamask-snap": "workspace:*",
+    "@walletconnect/modal": "^2.7.0",
+    "@walletconnect/modal-core": "^2.7.0",
+    "@walletconnect/qrcode-modal": "^1.8.0",
+    "@walletconnect/utils": "^2.17.3",
+    "@walletconnect/web3wallet": "^1.16.1",
+    "ethers": "^6.13.4",
     "next": "^15.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@repo/eslint-config": "workspace:*",
+    "@repo/eslint-config": "workspace:^",
     "@repo/typescript-config": "workspace:*",
     "@types/node": "^20",
     "@types/react": "18.3.1",
