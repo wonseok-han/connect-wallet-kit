@@ -70,7 +70,7 @@ export const getSnapAccountInfo = async (network: string, snapId: string) => {
     snapAccountEvmAddress = response.accountInfo.evmAddress;
     snapAccountBalance = response.accountInfo.balance.hbars;
     outText = `${snapAccountEvmAddress} has ${snapAccountBalance} ℏ ✅`;
-  } catch (e) {
+  } catch (e: any) {
     snapAccountEvmAddress = e.message.match(/0x[a-fA-F0-9]{40}/)[0];
     outText = `Go to MetaMask and transfer HBAR to the snap address to activate it: ${snapAccountEvmAddress} 📤`;
   }
