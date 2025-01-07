@@ -23,7 +23,7 @@ npx create-next-app apps/앱명
 
 ## 워크스페이스 생성
 
-* 어떤 경로에서든 실행 가능
+- 어떤 경로에서든 실행 가능
 
 ```sh
 npx turbo gen workspace --name 워크스페이스명
@@ -31,7 +31,7 @@ npx turbo gen workspace --name 워크스페이스명
 
 ## 종속성 추가
 
-* root 경로에서 실행
+- root 경로에서 실행
 
 ```sh
 pnpm add 패키지명 --filter 앱명
@@ -45,7 +45,7 @@ pnpm add -w 패키지명
 
 ## 패키지/앱에 종속되는 패키지 설치
 
-* 해당 패키지/앱 경로로 이동해서 실행
+- 해당 패키지/앱 경로로 이동해서 실행
 
 ```sh
 pnpm add 패키지명
