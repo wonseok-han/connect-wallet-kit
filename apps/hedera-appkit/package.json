@@ -8,6 +8,15 @@
     "start": "next start",
     "lint": "next lint"
   },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,css,md}": [
+      "prettier --write"
+    ]
+  },
   "dependencies": {
     "@hashgraph/hedera-wallet-connect": "^1.4.2",
     "@hashgraph/proto": "^2.15.0",

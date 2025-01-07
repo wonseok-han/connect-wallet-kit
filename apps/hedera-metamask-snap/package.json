@@ -9,6 +9,15 @@
     "start": "next start",
     "lint": "next lint"
   },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,css,md}": [
+      "prettier --write"
+    ]
+  },
   "dependencies": {
     "@hashgraph/hedera-wallet-snap": "^0.6.1",
     "@hashgraph/sdk": "^2.56.0",

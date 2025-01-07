@@ -2,6 +2,7 @@
   "name": "connect-wallet-kit",
   "private": true,
   "scripts": {
+    "prepare": "husky",
     "build": "turbo build",
     "dev": "turbo dev",
     "lint": "turbo lint",
@@ -12,6 +13,8 @@
     "dev:web": "pnpm --filter=guide-web run dev"
   },
   "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^15.3.0",
     "prettier": "^3.2.5",
     "turbo": "^2.3.3",
     "typescript": "5.5.4"
