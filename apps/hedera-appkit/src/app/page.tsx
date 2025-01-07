@@ -1,8 +1,9 @@
 'use client';
 
+import { hederaTestnet } from '@reown/appkit/networks';
 import { createAppKit } from '@reown/appkit/react';
 import { EthersAdapter } from '@reown/appkit-adapter-ethers';
-import { hederaTestnet } from '@reown/appkit/networks';
+
 import Connector from '@/app/_components/connector';
 
 const projectId = process.env.NEXT_PUBLIC_PROJECT_ID;

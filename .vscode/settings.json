@@ -1,9 +1,8 @@
 {
   "editor.formatOnSave": false,
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "always"
+    "source.fixAll.eslint": "explicit"
   },
-  "typescript.preferences.importModuleSpecifier": "non-relative",
   "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true
@@ -29,6 +28,14 @@
     {
       "language": "typescriptreact",
       "autoFix": true
+    },
+    {
+      "language": "javascript",
+      "autoFix": true
+    },
+    {
+      "language": "javascriptreact",
+      "autoFix": true
     }
   ],
   "[jsonc]": {
@@ -51,5 +58,6 @@
     {
       "mode": "auto"
     }
-  ]
+  ],
+  "typescript.tsdk": "node_modules/typescript/lib"
 }

@@ -93,14 +93,14 @@ type SnapTransferArgsType = {
 };
 
 export const snapTransfer = async ({
-  network,
-  snapId,
-  to,
   amount,
   assetType,
   maxFee,
   memo,
   mirrorNodeUrl = 'https://testnet.mirrornode.hedera.com',
+  network,
+  snapId,
+  to,
 }: SnapTransferArgsType) => {
   console.log(`\n=======================================`);
   console.log(`- Invoking transferCrypto...🟠`);

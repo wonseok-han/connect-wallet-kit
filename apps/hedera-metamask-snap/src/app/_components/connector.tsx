@@ -1,10 +1,11 @@
 'use client';
 
-import { connectWallet } from '@/utils/connect-wallet';
-import { getSnapAccountInfo, installSnap, snapTransfer } from '@/utils/snap';
 import { BrowserProvider } from 'ethers';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+
+import { connectWallet } from '@/utils/connect-wallet';
+import { getSnapAccountInfo, installSnap, snapTransfer } from '@/utils/snap';
 
 const NETWORK = 'testnet';
 const SNAP_ID = 'npm:@hashgraph/hedera-wallet-snap';
@@ -46,7 +47,7 @@ const Connector = () => {
   const handleGetSnapAccountInfo = async () => {
     if (!account || !snapInstallText) return;
 
-    const { snapAccountEvmAddress, outText } = await getSnapAccountInfo(
+    const { outText, snapAccountEvmAddress } = await getSnapAccountInfo(
       NETWORK,
       SNAP_ID
     );
@@ -62,7 +63,7 @@ const Connector = () => {
   const handleTransferUSDC = async () => {
     if (!account || !snapInstallText || !snapAddressLink) return;
 
-    const { response, outText } = await snapTransfer({
+    const { outText, response } = await snapTransfer({
       network: NETWORK,
       snapId: SNAP_ID,
       to: receiptAddress,

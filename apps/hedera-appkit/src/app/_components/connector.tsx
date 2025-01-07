@@ -1,20 +1,19 @@
 'use client';
 
 import {
-  useAppKit,
-  useAppKitAccount,
-  useAppKitProvider,
-} from '@reown/appkit/react';
-import {
   AccountId,
   Client,
   EthereumTransaction,
   PrivateKey,
-  TokenId,
 } from '@hashgraph/sdk';
+import {
+  useAppKit,
+  useAppKitAccount,
+  useAppKitProvider,
+} from '@reown/appkit/react';
 import { ethers } from 'ethers';
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
 
 const NETWORK = 'testnet';
 
@@ -65,7 +64,7 @@ const ABI_ERC_20 = [
 
 const Connector = () => {
   const { open } = useAppKit();
-  const { isConnected, address } = useAppKitAccount();
+  const { address, isConnected } = useAppKitAccount();
   const { walletProvider } =
     useAppKitProvider<ethers.Eip1193Provider>('eip155');
 
@@ -80,7 +79,6 @@ const Connector = () => {
   const handleAppkitSendTransaction = async () => {
     const provider = new ethers.BrowserProvider(walletProvider);
     const signer = await provider.getSigner();
-    const accountId = signer.getAddress();
 
     // const usdcContractAddress =
     //   '0x0000000000000000000000000000000000068cda'; // Hedera 네트워크에서 USDC 컨트랙트 주소로 교체하세요.
