@@ -3,6 +3,8 @@
 import {
   AccountId,
   Client,
+  Hbar,
+  HbarUnit,
   PrivateKey,
   TransferTransaction,
 } from '@hashgraph/sdk';
@@ -303,6 +305,79 @@ const Connector = () => {
     }
   };
 
+  const handleHederaSendHBAR = async () => {
+    try {
+      const operatorAccount = process.env.NEXT_PUBLIC_SYSTEM_ACCOUNT;
+      const operatorPrivateKey = process.env.NEXT_PUBLIC_SYSTEM_PRIVATE_KEY;
+
+      if (!provider || !connectedSession || accounts.length === 0) {
+        throw new Error('지갑이 연결되지 않았습니다.');
+      }
+
+      if (!operatorAccount || !operatorPrivateKey) {
+        console.error('operatorAccount or operatorPrivateKey is not found.');
+        throw new Error('operatorAccount or operatorPrivateKey is not found.');
+      }
+
+      setIsLoading(true);
+
+      const operatorAccountID = AccountId.fromString(operatorAccount);
+      const operatorPK = PrivateKey.fromStringECDSA(operatorPrivateKey);
+      const client = Client.forTestnet();
+      client.setOperator(operatorAccountID, operatorPK);
+
+      const sender = accounts[0];
+
+      const transaction = new TransferTransaction()
+        .addHbarTransfer(sender, new Hbar(-amount, HbarUnit.Hbar))
+        .addHbarTransfer(receiptAddress, new Hbar(amount, HbarUnit.Hbar))
+        .setTransactionMemo('txMemo')
+        .freezeWith(client); // 트랜잭션 고정
+
+      console.log('transaction::', transaction);
+
+      // 트랜잭션 직렬화 (base64 인코딩)
+      const transactionBytes = transaction.toBytes();
+      const transactionBase64 =
+        Buffer.from(transactionBytes).toString('base64');
+
+      const result = (await provider.request(
+        {
+          method: 'hedera_signAndExecuteTransaction',
+          params: {
+            signerAccountId: `hedera:testnet:${sender}`,
+            transactionList: transactionBase64,
+          },
+        },
+        'hedera:testnet'
+      )) as {
+        nodeId: `0.0.${string}`;
+        transactionHash: string;
+        transactionId: `0.0.${string}`;
+      };
+
+      console.log('Transaction result:', result);
+
+      if (result) {
+        setAfterTransferText(result.transactionId);
+        setAfterTxLink(
+          `https://hashscan.io/${NETWORK}/transaction/${result.transactionId}`
+        );
+      }
+    } catch (error: unknown) {
+      setIsLoading(false);
+
+      // error가 객체인지 확인
+      if (typeof error === 'object' && error !== null && 'message' in error) {
+        console.error(`Error:: ${(error as { message: string }).message}`);
+        alert(`Error:: ${(error as { message: string }).message}`);
+      } else {
+        console.error('Unknown error occurred', error);
+        alert('Unknown error occurred');
+      }
+    }
+  };
+
   useEffect(() => {
     handleInit();
   }, []);
@@ -379,7 +454,7 @@ const Connector = () => {
           <div className="flex gap-1">
             <input
               className="border rounded-sm p-2"
-              placeholder="전송할 USDC 수량을 입력해주세요."
+              placeholder="전송할 USDC/HBAR 수량을 입력해주세요."
               value={amount}
               onChange={(event) => setAmount(event.target.value)}
             />
@@ -414,6 +489,17 @@ const Connector = () => {
             onClick={handleHederaSendUSDC}
           >
             USDC 전송
+          </button>
+        </div>
+      )}
+
+      {isConnected && (
+        <div className="border rounded-md p-3 flex flex-col">
+          <button
+            className="border px-2 py-1 bg-gray-700 text-white"
+            onClick={handleHederaSendHBAR}
+          >
+            HBAR 전송
           </button>
         </div>
       )}
