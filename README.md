@@ -38,3 +38,11 @@ pnpm run dev:provider
 - [WalletConnect Appkit With Hedera](https://connect-wallet-kit-appkit.vercel.app/)
 - [Hedera Metamask Wallet Snap](https://connect-wallet-kit-metamask-snap.vercel.app/)
 - [WalletConnect UniversalProvider and SignClient With Hedera](https://connect-wallet-kit-universal-provider.vercel.app/)
+
+## Reference
+
+* [https://docs.reown.com/appkit/next/core/installation](https://docs.reown.com/appkit/next/core/installation)
+* [https://github.com/hashgraph/hedera-metamask-snaps](https://github.com/hashgraph/hedera-metamask-snaps)
+* [https://docs.hedera.com/hedera/open-source-solutions/hedera-wallet-snap-by-metamask](https://docs.hedera.com/hedera/open-source-solutions/hedera-wallet-snap-by-metamask)
+* [https://docs.reown.com/advanced/providers/universal](https://docs.reown.com/advanced/providers/universal)
+* [https://docs.reown.com/advanced/multichain/rpc-reference/hedera-rpc](https://docs.reown.com/advanced/multichain/rpc-reference/hedera-rpc)
