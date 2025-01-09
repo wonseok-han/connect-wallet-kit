@@ -47,7 +47,6 @@ if (projectId) {
     // TODO: Add your terms and privacy policy URLs
     termsConditionsUrl: '',
     privacyPolicyUrl: '',
-    allowUnsupportedChain: true,
   });
 }
 

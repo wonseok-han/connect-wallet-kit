@@ -12,6 +12,7 @@ import {
   useAppKitProvider,
 } from '@reown/appkit/react';
 import { ethers } from 'ethers';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 
@@ -210,7 +211,29 @@ const Connector = () => {
           <li>
             Wallypto 지갑 또한 설정에서는 지갑 연결을 지원하는 것 같이 보이지만
             2025.01.03 일자 스토어에 배포되있는 앱으로 확인했을 때 지원하지 않는
-            블록체인 네트워크로 인식됩니다.
+            블록체인 네트워크로 인식됩니다. 에러발생 <u>(2025.01.09 재확인)</u>
+            <div className="flex gap-2">
+              <Image
+                alt="error1"
+                height={0}
+                loading="lazy"
+                src="/assets/images/wallypto_connect_error_web.png"
+                width={200}
+                style={{
+                  height: '100%',
+                }}
+              />
+              <Image
+                alt="error2"
+                height={0}
+                loading="lazy"
+                src="/assets/images/wallypto_connect_error.png"
+                width={200}
+                style={{
+                  height: '100%',
+                }}
+              />
+            </div>
           </li>
           <li>
             작년에 사용했던 EthereumProvider 또한 더이상 사용되지 않는다고
