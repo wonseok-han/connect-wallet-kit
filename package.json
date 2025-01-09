@@ -9,7 +9,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "dev:appkit": "pnpm --filter=hedera-appkit run dev",
     "dev:snap": "pnpm --filter=hedera-metamask-snap run dev",
-    "dev:provider": "pnpm --filter=hedera-ethereum-provider run dev",
+    "dev:provider": "pnpm --filter=hedera-universal-provider run dev",
     "dev:web": "pnpm --filter=guide-web run dev"
   },
   "devDependencies": {
