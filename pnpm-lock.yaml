@@ -200,6 +200,9 @@ importers:
 
   apps/hedera-universal-provider:
     dependencies:
+      '@hashgraph/sdk':
+        specifier: ^2.56.0
+        version: 2.56.0
       '@walletconnect/sign-client':
         specifier: ^2.17.3
         version: 2.17.3

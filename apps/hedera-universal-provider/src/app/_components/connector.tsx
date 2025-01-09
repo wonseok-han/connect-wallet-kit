@@ -1,45 +1,58 @@
 'use client';
 
+import {
+  AccountId,
+  Client,
+  PrivateKey,
+  TransferTransaction,
+} from '@hashgraph/sdk';
 import { SignClient } from '@walletconnect/sign-client';
 import { SessionTypes } from '@walletconnect/types';
 import UniversalProvider from '@walletconnect/universal-provider';
+import Link from 'next/link';
 import QRCode from 'qrcode';
 import { useEffect, useState } from 'react';
 
 const STORED_WALLET_CONNECT_SESSION_KEY = 'walletconnect-session';
+const NETWORK = 'testnet';
 
 const Connector = () => {
   const [provider, setProvider] = useState<UniversalProvider>();
+  const [sessionLink, setSessionLink] = useState('');
   const [isConnected, setIsConnected] = useState(false);
   const [connectedSession, setConnectedSession] =
     useState<SessionTypes.Struct>();
 
   const [accounts, setAccounts] = useState<string[]>([]);
 
+  const [receiptAddress, setReceiptAddress] = useState('');
+  const [amount, setAmount] = useState('');
+  const [txMemo, setTxMemo] = useState('');
+  const [afterTransferText, setAfterTransferText] = useState('');
+  const [afterTxLink, setAfterTxLink] = useState('');
+
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleInit = async () => {
     const projectId = process.env.NEXT_PUBLIC_PROJECT_ID;
+    const METADATA = {
+      name: 'React App',
+      description: 'React App for WalletConnect',
+      url: 'http://localhost:3000',
+      icons: ['http://localhost:3000/favicon.ico'],
+    };
 
     // 1. SignClient 초기화
     const signClient = await SignClient.init({
       projectId: projectId,
-      metadata: {
-        name: 'React App',
-        description: 'React App for WalletConnect',
-        url: 'http://localhost:3000',
-        icons: ['http://localhost:3000/favicon.ico'],
-      },
+      metadata: METADATA,
     });
 
     // 2. UniversalProvider 초기화
     const providerInstance = await UniversalProvider.init({
       logger: 'info',
       projectId: projectId,
-      metadata: {
-        name: 'React App',
-        description: 'React App for WalletConnect',
-        url: 'http://localhost:3000',
-        icons: ['http://localhost:3000/favicon.ico'],
-      },
+      metadata: METADATA,
       client: signClient,
     });
 
@@ -51,10 +64,21 @@ const Connector = () => {
       const session = JSON.parse(storedSession) as SessionTypes.Struct;
       console.log('stored session::', session);
 
-      providerInstance.session = session;
-      console.log('new session::', session);
+      providerInstance.session = {
+        ...session,
+      };
       setConnectedSession(session);
-      setAccounts(session?.namespaces?.['hedera'].accounts);
+
+      const acocunts = session?.namespaces?.['hedera'].accounts.map(
+        (account) => {
+          const [network, chain, address] = account.split(':');
+          console.log(
+            `Network is ${network}.. and Chain is ${chain}.. and Account is ${address}..`
+          );
+          return address;
+        }
+      );
+      setAccounts(acocunts);
     }
 
     setProvider(providerInstance);
@@ -67,12 +91,48 @@ const Connector = () => {
       }
 
       provider.on('display_uri', (uri: string) => {
+        console.log('display_uri', uri);
+
+        setSessionLink(uri);
+
         QRCode.toCanvas(document.getElementById('qrcode'), uri, (error) => {
           if (error) {
             console.error('Failed to generate QR code:', error);
           }
         });
       });
+
+      // Subscribe to session ping
+      provider.on(
+        'session_ping',
+        ({ id, topic }: { id: string; topic: string }) => {
+          console.log('session_ping', id, topic);
+        }
+      );
+
+      // Subscribe to session event
+      provider.on(
+        'session_event',
+        ({ chainId, event }: { chainId: string; event: unknown }) => {
+          console.log('session_event', event, chainId);
+        }
+      );
+
+      // Subscribe to session update
+      provider.on(
+        'session_update',
+        ({ params, topic }: { params: unknown; topic: string }) => {
+          console.log('session_update', topic, params);
+        }
+      );
+
+      // Subscribe to session delete
+      provider.on(
+        'session_delete',
+        ({ id, topic }: { id: string; topic: string }) => {
+          console.log('session_delete', id, topic);
+        }
+      );
 
       const session = await provider.connect({
         optionalNamespaces: {
@@ -86,6 +146,7 @@ const Connector = () => {
               'hedera_getNodeAddresses',
             ],
             chains: ['hedera:testnet'],
+            defaultChain: 'hedera:testnet',
             events: ['accountsChanged'],
             rpcMap: {
               mainnet: 'https://mainnet.hashio.io/api',
@@ -99,7 +160,18 @@ const Connector = () => {
 
       if (session) {
         setConnectedSession(session);
-        setAccounts(session?.namespaces?.['hedera'].accounts);
+
+        const acocunts = session?.namespaces?.['hedera'].accounts.map(
+          (account) => {
+            const [network, chain, address] = account.split(':');
+            console.log(
+              `Network is ${network}.. and Chain is ${chain}.. and Account is ${address}..`
+            );
+            return address;
+          }
+        );
+        setAccounts(acocunts);
+
         setIsConnected(true);
 
         // 세션 저장
@@ -132,9 +204,94 @@ const Connector = () => {
       setAccounts([]);
       setIsConnected(false);
 
+      setSessionLink('');
+      setReceiptAddress('');
+      setAmount('');
+      setTxMemo('');
+      setAfterTransferText('');
+      setAfterTxLink('');
+
       // 세션 삭제
       localStorage.removeItem(STORED_WALLET_CONNECT_SESSION_KEY);
     } catch (error: unknown) {
+      // error가 객체인지 확인
+      if (typeof error === 'object' && error !== null && 'message' in error) {
+        console.error(`Error:: ${(error as { message: string }).message}`);
+        alert(`Error:: ${(error as { message: string }).message}`);
+      } else {
+        console.error('Unknown error occurred', error);
+        alert('Unknown error occurred');
+      }
+    }
+  };
+
+  const handleHederaSendUSDC = async () => {
+    try {
+      const operatorAccount = process.env.NEXT_PUBLIC_SYSTEM_ACCOUNT;
+      const operatorPrivateKey = process.env.NEXT_PUBLIC_SYSTEM_PRIVATE_KEY;
+
+      if (!provider || !connectedSession || accounts.length === 0) {
+        throw new Error('지갑이 연결되지 않았습니다.');
+      }
+
+      if (!operatorAccount || !operatorPrivateKey) {
+        console.error('operatorAccount or operatorPrivateKey is not found.');
+        throw new Error('operatorAccount or operatorPrivateKey is not found.');
+      }
+
+      setIsLoading(true);
+
+      const operatorAccountID = AccountId.fromString(operatorAccount);
+      const operatorPK = PrivateKey.fromStringECDSA(operatorPrivateKey);
+      const client = Client.forTestnet();
+      client.setOperator(operatorAccountID, operatorPK);
+
+      const sender = accounts[0];
+      const tokenDecimals = 6;
+      const parsedAmount = Math.floor(
+        Number(amount) * Math.pow(10, tokenDecimals)
+      );
+
+      const usdcTokenId = '0.0.429274';
+      const transaction = new TransferTransaction()
+        .addTokenTransfer(usdcTokenId, sender, -parsedAmount) // 송신 계정에서 amount만큼 차감
+        .addTokenTransfer(usdcTokenId, receiptAddress, parsedAmount) // 수신 계정에 amount만큼 추가
+        .setTransactionMemo('txMemo')
+        .freezeWith(client); // 트랜잭션 고정
+
+      console.log('transaction::', transaction);
+
+      // 트랜잭션 직렬화 (base64 인코딩)
+      const transactionBytes = transaction.toBytes();
+      const transactionBase64 =
+        Buffer.from(transactionBytes).toString('base64');
+
+      const result = (await provider.request(
+        {
+          method: 'hedera_signAndExecuteTransaction',
+          params: {
+            signerAccountId: `hedera:testnet:${sender}`,
+            transactionList: transactionBase64,
+          },
+        },
+        'hedera:testnet'
+      )) as {
+        nodeId: `0.0.${string}`;
+        transactionHash: string;
+        transactionId: `0.0.${string}`;
+      };
+
+      console.log('Transaction result:', result);
+
+      if (result) {
+        setAfterTransferText(result.transactionId);
+        setAfterTxLink(
+          `https://hashscan.io/${NETWORK}/transaction/${result.transactionId}`
+        );
+      }
+    } catch (error: unknown) {
+      setIsLoading(false);
+
       // error가 객체인지 확인
       if (typeof error === 'object' && error !== null && 'message' in error) {
         console.error(`Error:: ${(error as { message: string }).message}`);
@@ -158,6 +315,12 @@ const Connector = () => {
     }
   }, [connectedSession]);
 
+  useEffect(() => {
+    if (afterTransferText) {
+      setIsLoading(false);
+    }
+  }, [afterTransferText]);
+
   return (
     <div>
       {!isConnected && (
@@ -168,6 +331,15 @@ const Connector = () => {
           </button>
           <div className="flex flex-col justify-center items-center">
             <h3>Scan this QR code to connect your wallet:</h3>
+            {sessionLink && (
+              <Link
+                href={`https://link.hashpack.app/${sessionLink}`}
+                target="_blank"
+              >
+                <p className="text-blue-500">HashPack DeepLink</p>
+              </Link>
+            )}
+
             <canvas id="qrcode"></canvas>
           </div>
         </div>
@@ -182,6 +354,80 @@ const Connector = () => {
           <button className="border px-2 py-1" onClick={handleDisconnect}>
             연결 해제
           </button>
+        </div>
+      )}
+
+      {isConnected && (
+        <div className="border rounded-md p-3 flex flex-col">
+          <span className="font-semibold">전송 전 데이터 입력</span>
+          <div className="flex gap-1">
+            <input
+              className="border rounded-sm p-2"
+              placeholder="전송받을 Account를 입력해주세요."
+              value={receiptAddress}
+              onChange={(event) => setReceiptAddress(event.target.value)}
+            />
+            <button
+              className="border px-2 py-1"
+              onClick={() =>
+                setReceiptAddress('0x1e6b24a40e7a352da76ce059e39e874000fbdd4d')
+              }
+            >
+              자동 완성
+            </button>
+          </div>
+          <div className="flex gap-1">
+            <input
+              className="border rounded-sm p-2"
+              placeholder="전송할 USDC 수량을 입력해주세요."
+              value={amount}
+              onChange={(event) => setAmount(event.target.value)}
+            />
+            <button
+              className="border px-2 py-1"
+              onClick={() => setAmount('0.1')}
+            >
+              자동 완성
+            </button>
+          </div>
+          <div className="flex gap-1">
+            <input
+              className="border rounded-sm p-2"
+              placeholder="Transaction Memo를 입력해주세요."
+              value={txMemo}
+              onChange={(event) => setTxMemo(event.target.value)}
+            />
+            <button
+              className="border px-2 py-1"
+              onClick={() => setTxMemo('제대로 들어가니!?')}
+            >
+              자동 완성
+            </button>
+          </div>
+        </div>
+      )}
+      {isConnected && (
+        <div className="border rounded-md p-3 flex flex-col">
+          <span className="font-semibold">hedera/sdk 기반</span>
+          <button
+            className="border px-2 py-1 bg-gray-700 text-white"
+            onClick={handleHederaSendUSDC}
+          >
+            USDC 전송
+          </button>
+        </div>
+      )}
+
+      {isLoading && (
+        <div className="font-semibold text-red-600">기다려주세요...</div>
+      )}
+
+      {afterTransferText && (
+        <div className="mt-4">
+          <span className="font-semibold">USDC 전송 결과</span>
+          <Link href={afterTxLink} target="_blank">
+            <p className="text-blue-500">{afterTransferText}</p>
+          </Link>
         </div>
       )}
     </div>
