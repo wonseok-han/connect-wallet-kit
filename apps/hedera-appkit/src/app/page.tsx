@@ -12,8 +12,8 @@ const projectId = process.env.NEXT_PUBLIC_PROJECT_ID;
 const metadata = {
   name: 'WalletConnect Appkit With Hedera',
   description: 'React App for WalletConnect Appkit With Hedera',
-  url: 'https://connect-wallet-kit.vercel.app', // origin must match your domain & subdomain
-  icons: ['https://connect-wallet-kit.vercel.app/vercel.svg'],
+  url: 'https://connect-wallet-kit-appkit.vercel.app', // origin must match your domain & subdomain
+  icons: ['https://connect-wallet-kit-appkit.vercel.app/vercel.svg'],
 };
 
 // 3. Create the AppKit instance

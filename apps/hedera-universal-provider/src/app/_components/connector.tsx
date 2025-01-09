@@ -41,8 +41,10 @@ const Connector = () => {
     const METADATA = {
       name: 'WalletConnect UniversalProvider With Hedera',
       description: 'React App for WalletConnect UniversalProvider With Hedera',
-      url: 'https://connect-wallet-kit-dzss.vercel.app',
-      icons: ['https://connect-wallet-kit-dzss.vercel.app//vercel.svg'],
+      url: 'https://connect-wallet-kit-universal-provider.vercel.app',
+      icons: [
+        'https://connect-wallet-kit-universal-provider.vercel.app/vercel.svg',
+      ],
     };
 
     // 1. SignClient 초기화

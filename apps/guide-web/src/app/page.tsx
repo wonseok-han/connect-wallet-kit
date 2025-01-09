@@ -12,7 +12,7 @@ export default function Home() {
           <ul className="list-inside list-disc">
             <li>
               <Link
-                href="https://connect-wallet-kit.vercel.app"
+                href="https://connect-wallet-kit-appkit.vercel.app/"
                 target="_blank"
               >
                 이동하기
@@ -25,7 +25,7 @@ export default function Home() {
           <ul className="list-inside list-disc">
             <li>
               <Link
-                href="https://connect-wallet-kit-uuth.vercel.app/"
+                href="https://connect-wallet-kit-metamask-snap.vercel.app/"
                 target="_blank"
               >
                 이동하기
@@ -40,7 +40,7 @@ export default function Home() {
           <ul className="list-inside list-disc">
             <li>
               <Link
-                href="https://connect-wallet-kit-dzss.vercel.app/"
+                href="https://connect-wallet-kit-universal-provider.vercel.app/"
                 target="_blank"
               >
                 이동하기
