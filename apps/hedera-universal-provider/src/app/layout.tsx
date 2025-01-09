@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'WalletConnect UniversalProvider With. Hedera',
+  title: 'WalletConnect UniversalProvider With Hedera',
   description: 'WalletConnect UniversalProvider With Hedera',
 };
 

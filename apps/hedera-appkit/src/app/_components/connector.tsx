@@ -193,6 +193,13 @@ const Connector = () => {
         <span className="font-semibold">참고</span>
         <ul className="list-disc list-inside">
           <li>
+            WalletConnectV2 기반의 Appkit{' '}
+            <em>
+              <b>{`"@reown/appkit": "^1.6.3"`}</b>
+            </em>{' '}
+            라이브러리 사용
+          </li>
+          <li>
             최신의 Appkit 버전에서 HashPack 브라우저 확장 프로그램은 감지되지도
             않고, 이더리움 트랜잭션이 기능하지 않습니다.
           </li>
@@ -262,7 +269,7 @@ const Connector = () => {
           <span className="font-semibold">전송 전 데이터 입력</span>
           <div className="flex gap-1">
             <input
-              className="border rounded-sm p-2"
+              className="border rounded-sm p-2 flex-grow"
               placeholder="전송받을 Account를 입력해주세요."
               value={receiptAddress}
               onChange={(event) => setReceiptAddress(event.target.value)}
@@ -278,7 +285,7 @@ const Connector = () => {
           </div>
           <div className="flex gap-1">
             <input
-              className="border rounded-sm p-2"
+              className="border rounded-sm p-2 flex-grow"
               placeholder="전송할 USDC 수량을 입력해주세요."
               value={amount}
               onChange={(event) => setAmount(event.target.value)}
@@ -292,7 +299,7 @@ const Connector = () => {
           </div>
           <div className="flex gap-1">
             <input
-              className="border rounded-sm p-2"
+              className="border rounded-sm p-2 flex-grow"
               placeholder="Transaction Memo를 입력해주세요."
               value={txMemo}
               onChange={(event) => setTxMemo(event.target.value)}

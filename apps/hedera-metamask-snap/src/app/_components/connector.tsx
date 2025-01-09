@@ -151,7 +151,7 @@ const Connector = () => {
           <span className="font-semibold">USDC 전송</span>
           <div className="flex gap-1">
             <input
-              className="border rounded-sm p-2"
+              className="border rounded-sm p-2 flex-grow"
               placeholder="전송받을 Account를 입력해주세요."
               value={receiptAddress}
               onChange={(event) => setReceiptAddress(event.target.value)}
@@ -165,7 +165,7 @@ const Connector = () => {
           </div>
           <div className="flex gap-1">
             <input
-              className="border rounded-sm p-2"
+              className="border rounded-sm p-2 flex-grow"
               placeholder="전송할 USDC 수량을 입력해주세요."
               value={amount}
               onChange={(event) => setAmount(event.target.value)}
@@ -179,7 +179,7 @@ const Connector = () => {
           </div>
           <div className="flex gap-1">
             <input
-              className="border rounded-sm p-2"
+              className="border rounded-sm p-2 flex-grow"
               placeholder="Transaction Memo를 입력해주세요."
               value={txMemo}
               onChange={(event) => setTxMemo(event.target.value)}

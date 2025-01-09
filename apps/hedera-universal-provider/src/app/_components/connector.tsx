@@ -11,6 +11,7 @@ import {
 import { SignClient } from '@walletconnect/sign-client';
 import { SessionTypes } from '@walletconnect/types';
 import UniversalProvider from '@walletconnect/universal-provider';
+import Image from 'next/image';
 import Link from 'next/link';
 import QRCode from 'qrcode';
 import { useEffect, useState } from 'react';
@@ -38,10 +39,10 @@ const Connector = () => {
   const handleInit = async () => {
     const projectId = process.env.NEXT_PUBLIC_PROJECT_ID;
     const METADATA = {
-      name: 'React App',
-      description: 'React App for WalletConnect',
-      url: 'http://localhost:3000',
-      icons: ['http://localhost:3000/favicon.ico'],
+      name: 'WalletConnect UniversalProvider With Hedera',
+      description: 'React App for WalletConnect UniversalProvider With Hedera',
+      url: 'https://connect-wallet-kit-dzss.vercel.app',
+      icons: ['https://connect-wallet-kit-dzss.vercel.app//vercel.svg'],
     };
 
     // 1. SignClient 초기화
@@ -398,6 +399,65 @@ const Connector = () => {
 
   return (
     <div>
+      <div className="border rounded-md p-3">
+        <span className="font-semibold">참고</span>
+        <ul className="list-disc list-inside">
+          <li>
+            WalletConnectV2 기반의 멀티체인을 지원하는 UniversalProvider{' '}
+            <em>
+              <b>{`"@walletconnect/universal-provider": "^2.17.3"`}</b>
+            </em>
+            와{' '}
+            <em>
+              <b>{`"@walletconnect/sign-client": "^2.17.3"`}</b>
+            </em>{' '}
+            라이브러리를 연동해서 사용
+          </li>
+          <li>
+            HashPack과 Wallypto 지갑이 연결되는 것까지는 확인 가능. 하지만
+            HashPack 연결시 토큰 전송이 정상적으로 동작하는 반면, Wallypto는
+            트랜잭션 서명 시도시{' '}
+            <em>
+              <b>{`ReownCoreError(code: 4001, message: User rejected., data: null)`}</b>
+            </em>{' '}
+            에러 발생 <u>(2025.01.09 일자에서 확인)</u>
+            <Image
+              alt="error"
+              height={0}
+              loading="lazy"
+              src="/assets/images/wallypto_tx_error.png"
+              width={200}
+              style={{
+                height: '100%',
+              }}
+            />
+          </li>
+          <li>
+            WalletConnect UniversalProvider 가이드
+            <ul className="list-decimal list-inside px-2">
+              <li>
+                <Link
+                  className="text-blue-500"
+                  href="https://docs.reown.com/advanced/providers/universal"
+                  target="_blank"
+                >
+                  https://docs.reown.com/advanced/providers/universal
+                </Link>
+              </li>
+              <li>
+                <Link
+                  className="text-blue-500"
+                  href="https://docs.reown.com/advanced/multichain/rpc-reference/hedera-rpc"
+                  target="_blank"
+                >
+                  https://docs.reown.com/advanced/multichain/rpc-reference/hedera-rpc
+                </Link>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
       {!isConnected && (
         <div className="border rounded-md p-3 flex flex-col">
           <span className="font-semibold">지갑이 연결되지 않았습니다.</span>
@@ -437,7 +497,7 @@ const Connector = () => {
           <span className="font-semibold">전송 전 데이터 입력</span>
           <div className="flex gap-1">
             <input
-              className="border rounded-sm p-2"
+              className="border rounded-sm p-2 flex-grow"
               placeholder="전송받을 Account를 입력해주세요."
               value={receiptAddress}
               onChange={(event) => setReceiptAddress(event.target.value)}
@@ -453,7 +513,7 @@ const Connector = () => {
           </div>
           <div className="flex gap-1">
             <input
-              className="border rounded-sm p-2"
+              className="border rounded-sm p-2 flex-grow"
               placeholder="전송할 USDC/HBAR 수량을 입력해주세요."
               value={amount}
               onChange={(event) => setAmount(event.target.value)}
@@ -467,7 +527,7 @@ const Connector = () => {
           </div>
           <div className="flex gap-1">
             <input
-              className="border rounded-sm p-2"
+              className="border rounded-sm p-2 flex-grow"
               placeholder="Transaction Memo를 입력해주세요."
               value={txMemo}
               onChange={(event) => setTxMemo(event.target.value)}
@@ -495,6 +555,7 @@ const Connector = () => {
 
       {isConnected && (
         <div className="border rounded-md p-3 flex flex-col">
+          <span className="font-semibold">hedera/sdk 기반</span>
           <button
             className="border px-2 py-1 bg-gray-700 text-white"
             onClick={handleHederaSendHBAR}

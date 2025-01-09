@@ -10,10 +10,10 @@ const projectId = process.env.NEXT_PUBLIC_PROJECT_ID;
 
 // 2. Create a metadata object
 const metadata = {
-  name: 'My Website',
-  description: 'My Website description',
-  url: 'http://localhost:3000', // origin must match your domain & subdomain
-  icons: ['https://avatars.mywebsite.com/'],
+  name: 'WalletConnect Appkit With Hedera',
+  description: 'React App for WalletConnect Appkit With Hedera',
+  url: 'https://connect-wallet-kit.vercel.app', // origin must match your domain & subdomain
+  icons: ['https://connect-wallet-kit.vercel.app/vercel.svg'],
 };
 
 // 3. Create the AppKit instance
@@ -47,6 +47,7 @@ if (projectId) {
     // TODO: Add your terms and privacy policy URLs
     termsConditionsUrl: '',
     privacyPolicyUrl: '',
+    allowUnsupportedChain: true,
   });
 }
 
