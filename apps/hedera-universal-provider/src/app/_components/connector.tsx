@@ -261,7 +261,7 @@ const Connector = () => {
       const transaction = new TransferTransaction()
         .addTokenTransfer(usdcTokenId, sender, -parsedAmount) // 송신 계정에서 amount만큼 차감
         .addTokenTransfer(usdcTokenId, receiptAddress, parsedAmount) // 수신 계정에 amount만큼 추가
-        .setTransactionMemo('txMemo')
+        .setTransactionMemo(txMemo)
         .freezeWith(client); // 트랜잭션 고정
 
       console.log('transaction::', transaction);
@@ -334,7 +334,7 @@ const Connector = () => {
       const transaction = new TransferTransaction()
         .addHbarTransfer(sender, new Hbar(-amount, HbarUnit.Hbar))
         .addHbarTransfer(receiptAddress, new Hbar(amount, HbarUnit.Hbar))
-        .setTransactionMemo('txMemo')
+        .setTransactionMemo(txMemo)
         .freezeWith(client); // 트랜잭션 고정
 
       console.log('transaction::', transaction);
