@@ -545,7 +545,7 @@ const Connector = () => {
       )}
       {isConnected && (
         <div className="border rounded-md p-3 flex flex-col">
-          <span className="font-semibold">hedera/sdk 기반</span>
+          <span className="font-semibold">hedera/sdk and HIP-820 기반</span>
           <button
             className="border px-2 py-1 bg-gray-700 text-white"
             onClick={handleHederaSendUSDC}
@@ -557,7 +557,7 @@ const Connector = () => {
 
       {isConnected && (
         <div className="border rounded-md p-3 flex flex-col">
-          <span className="font-semibold">hedera/sdk 기반</span>
+          <span className="font-semibold">hedera/sdk and HIP-820 기반</span>
           <button
             className="border px-2 py-1 bg-gray-700 text-white"
             onClick={handleHederaSendHBAR}
