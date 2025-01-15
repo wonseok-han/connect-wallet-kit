@@ -1,10 +1,16 @@
 import Link from 'next/link';
 
+import Translator from './_components/transltor';
+
 export default function Home() {
   return (
     <div className="grid grid-rows-[20px_1fr_20px] justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <h1 className="font-extrabold text-2xl">My Hedera Wallet Test Sites</h1>
       <main className="flex flex-col gap-8 row-start-2 sm:items-start w-full">
+        <div className="border rounded-md p-3 w-full">
+          <span className="font-semibold">번외 Translator Test</span>
+          <Translator />
+        </div>
         <div className="border rounded-md p-3 w-full">
           <span className="font-semibold">
             WalletConnect Appkit With Hedera
