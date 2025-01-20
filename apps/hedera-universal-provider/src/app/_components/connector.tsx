@@ -4,8 +4,11 @@ import {
   AccountId,
   Client,
   Hbar,
-  HbarUnit,
+  LedgerId,
   PrivateKey,
+  TokenAssociateTransaction,
+  TokenId,
+  TransactionId,
   TransferTransaction,
 } from '@hashgraph/sdk';
 import { SignClient } from '@walletconnect/sign-client';
@@ -164,6 +167,13 @@ const Connector = () => {
       console.log('connected session::', session);
 
       if (session) {
+        const walletName = session.peer.metadata.name;
+        const allowedWallets = ['HashPack', 'Wallypto'];
+        if (!allowedWallets.includes(walletName)) {
+          throw new Error(
+            '지원하지 않는 지갑입니다. HashPack, Wallypto만 지원합니다.'
+          );
+        }
         setConnectedSession(session);
 
         const acocunts = session?.namespaces?.['hedera'].accounts.map(
@@ -259,6 +269,7 @@ const Connector = () => {
 
       const usdcTokenId = '0.0.429274';
       const transaction = new TransferTransaction()
+        .setTransactionId(TransactionId.generate(sender))
         .addTokenTransfer(usdcTokenId, sender, -parsedAmount) // 송신 계정에서 amount만큼 차감
         .addTokenTransfer(usdcTokenId, receiptAddress, parsedAmount) // 수신 계정에 amount만큼 추가
         .setTransactionMemo(txMemo)
@@ -271,20 +282,53 @@ const Connector = () => {
       const transactionBase64 =
         Buffer.from(transactionBytes).toString('base64');
 
-      const result = (await provider.request(
-        {
+      const LEDGER_ID_MAPPINGS: [LedgerId, number, string][] = [
+        [LedgerId.MAINNET, 295, 'hedera:mainnet'],
+        [LedgerId.TESTNET, 296, 'hedera:testnet'],
+        [LedgerId.PREVIEWNET, 297, 'hedera:previewnet'],
+        [LedgerId.LOCAL_NODE, 298, 'hedera:devnet'],
+      ];
+      const DEFAULT_CAIP = LEDGER_ID_MAPPINGS[3][2];
+      const ledgerIdToCAIPChainId = (ledgerId: LedgerId): string => {
+        for (let i = 0; i < LEDGER_ID_MAPPINGS.length; i++) {
+          const [ledgerId_, , chainId] = LEDGER_ID_MAPPINGS[i];
+          if (ledgerId.toString() === ledgerId_.toString()) {
+            return chainId;
+          }
+        }
+        return DEFAULT_CAIP;
+      };
+
+      const result = (await provider.client.request({
+        topic: connectedSession.topic,
+        request: {
           method: 'hedera_signAndExecuteTransaction',
           params: {
             signerAccountId: `hedera:testnet:${sender}`,
             transactionList: transactionBase64,
           },
         },
-        'hedera:testnet'
-      )) as {
+        chainId: ledgerIdToCAIPChainId(LedgerId.TESTNET),
+      })) as {
         nodeId: `0.0.${string}`;
         transactionHash: string;
         transactionId: `0.0.${string}`;
       };
+
+      // const result = (await provider.request(
+      //   {
+      //     method: 'hedera_signAndExecuteTransaction',
+      //     params: {
+      //       signerAccountId: `hedera:testnet:${sender}`,
+      //       transactionList: transactionBase64,
+      //     },
+      //   },
+      //   'hedera:testnet'
+      // )) as {
+      //   nodeId: `0.0.${string}`;
+      //   transactionHash: string;
+      //   transactionId: `0.0.${string}`;
+      // };
 
       console.log('Transaction result:', result);
 
@@ -331,9 +375,12 @@ const Connector = () => {
 
       const sender = accounts[0];
 
+      const hbarAmount = new Hbar(Number(amount));
+
       const transaction = new TransferTransaction()
-        .addHbarTransfer(sender, new Hbar(-amount, HbarUnit.Hbar))
-        .addHbarTransfer(receiptAddress, new Hbar(amount, HbarUnit.Hbar))
+        .setTransactionId(TransactionId.generate(sender))
+        .addHbarTransfer(sender, hbarAmount.negated())
+        .addHbarTransfer(receiptAddress, hbarAmount)
         .setTransactionMemo(txMemo)
         .freezeWith(client); // 트랜잭션 고정
 
@@ -343,6 +390,39 @@ const Connector = () => {
       const transactionBytes = transaction.toBytes();
       const transactionBase64 =
         Buffer.from(transactionBytes).toString('base64');
+
+      // const LEDGER_ID_MAPPINGS: [LedgerId, number, string][] = [
+      //   [LedgerId.MAINNET, 295, 'hedera:mainnet'],
+      //   [LedgerId.TESTNET, 296, 'hedera:testnet'],
+      //   [LedgerId.PREVIEWNET, 297, 'hedera:previewnet'],
+      //   [LedgerId.LOCAL_NODE, 298, 'hedera:devnet'],
+      // ];
+      // const DEFAULT_CAIP = LEDGER_ID_MAPPINGS[3][2];
+      // const ledgerIdToCAIPChainId = (ledgerId: LedgerId): string => {
+      //   for (let i = 0; i < LEDGER_ID_MAPPINGS.length; i++) {
+      //     const [ledgerId_, , chainId] = LEDGER_ID_MAPPINGS[i];
+      //     if (ledgerId.toString() === ledgerId_.toString()) {
+      //       return chainId;
+      //     }
+      //   }
+      //   return DEFAULT_CAIP;
+      // };
+
+      // const result = (await provider.client.request({
+      //   topic: connectedSession.topic,
+      //   request: {
+      //     method: 'hedera_signAndExecuteTransaction',
+      //     params: {
+      //       signerAccountId: `hedera:testnet:${sender}`,
+      //       transactionList: transactionBase64,
+      //     },
+      //   },
+      //   chainId: ledgerIdToCAIPChainId(LedgerId.TESTNET),
+      // })) as {
+      //   nodeId: `0.0.${string}`;
+      //   transactionHash: string;
+      //   transactionId: `0.0.${string}`;
+      // };
 
       const result = (await provider.request(
         {
@@ -354,6 +434,99 @@ const Connector = () => {
         },
         'hedera:testnet'
       )) as {
+        nodeId: `0.0.${string}`;
+        transactionHash: string;
+        transactionId: `0.0.${string}`;
+      };
+
+      console.log('Transaction result:', result);
+
+      if (result) {
+        setAfterTransferText(result.transactionId);
+        setAfterTxLink(
+          `https://hashscan.io/${NETWORK}/transaction/${result.transactionId}`
+        );
+      }
+    } catch (error: unknown) {
+      setIsLoading(false);
+
+      // error가 객체인지 확인
+      if (typeof error === 'object' && error !== null && 'message' in error) {
+        console.error(`Error:: ${(error as { message: string }).message}`);
+        alert(`Error:: ${(error as { message: string }).message}`);
+      } else {
+        console.error('Unknown error occurred', error);
+        alert('Unknown error occurred');
+      }
+    }
+  };
+
+  const handleHederaAssociagteUSDC = async () => {
+    try {
+      const operatorAccount = process.env.NEXT_PUBLIC_SYSTEM_ACCOUNT;
+      // const operatorPrivateKey = process.env.NEXT_PUBLIC_SYSTEM_PRIVATE_KEY;
+
+      if (!provider || !connectedSession || accounts.length === 0) {
+        throw new Error('지갑이 연결되지 않았습니다.');
+      }
+
+      if (!operatorAccount) {
+        console.error('operatorAccount is not found.');
+        throw new Error('operatorAccount is not found.');
+      }
+
+      setIsLoading(true);
+
+      const operatorAccountID = AccountId.fromString(operatorAccount);
+
+      const client = Client.forTestnet();
+      client.setOperator(operatorAccountID, PrivateKey.generate());
+
+      const sender = accounts[0];
+
+      const usdcTokenId = '0.0.429274';
+      const transaction = new TokenAssociateTransaction()
+        .setTransactionId(TransactionId.generate(sender))
+        .setAccountId(sender)
+        .setTokenIds([TokenId.fromString(usdcTokenId)])
+        .setTransactionMemo('어쏘시에이트!')
+        .freezeWith(client);
+
+      console.log('transaction::', transaction);
+
+      // 트랜잭션 직렬화 (base64 인코딩)
+      const transactionBytes = transaction.toBytes();
+      const transactionBase64 =
+        Buffer.from(transactionBytes).toString('base64');
+
+      const LEDGER_ID_MAPPINGS: [LedgerId, number, string][] = [
+        [LedgerId.MAINNET, 295, 'hedera:mainnet'],
+        [LedgerId.TESTNET, 296, 'hedera:testnet'],
+        [LedgerId.PREVIEWNET, 297, 'hedera:previewnet'],
+        [LedgerId.LOCAL_NODE, 298, 'hedera:devnet'],
+      ];
+      const DEFAULT_CAIP = LEDGER_ID_MAPPINGS[3][2];
+      const ledgerIdToCAIPChainId = (ledgerId: LedgerId): string => {
+        for (let i = 0; i < LEDGER_ID_MAPPINGS.length; i++) {
+          const [ledgerId_, , chainId] = LEDGER_ID_MAPPINGS[i];
+          if (ledgerId.toString() === ledgerId_.toString()) {
+            return chainId;
+          }
+        }
+        return DEFAULT_CAIP;
+      };
+
+      const result = (await provider.client.request({
+        topic: connectedSession.topic,
+        request: {
+          method: 'hedera_signAndExecuteTransaction',
+          params: {
+            signerAccountId: `hedera:testnet:${sender}`,
+            transactionList: transactionBase64,
+          },
+        },
+        chainId: ledgerIdToCAIPChainId(LedgerId.TESTNET),
+      })) as {
         nodeId: `0.0.${string}`;
         transactionHash: string;
         transactionId: `0.0.${string}`;
@@ -563,6 +736,18 @@ const Connector = () => {
             onClick={handleHederaSendHBAR}
           >
             HBAR 전송
+          </button>
+        </div>
+      )}
+
+      {isConnected && (
+        <div className="border rounded-md p-3 flex flex-col">
+          <span className="font-semibold">hedera/sdk and HIP-820 기반</span>
+          <button
+            className="border px-2 py-1 bg-gray-700 text-white"
+            onClick={handleHederaAssociagteUSDC}
+          >
+            USDC Associate
           </button>
         </div>
       )}
