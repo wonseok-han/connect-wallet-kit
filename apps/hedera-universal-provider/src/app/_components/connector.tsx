@@ -764,6 +764,19 @@ const Connector = () => {
           </Link>
         </div>
       )}
+
+      <Link
+        href={`wallypto://wc?uri=${encodeURIComponent(sessionLink)}`}
+        target="_blank"
+      >
+        월립토 테스트
+      </Link>
+      <Link
+        href={`metamask://wc?uri=${encodeURIComponent(sessionLink)}`}
+        target="_blank"
+      >
+        메타마스크 테스트
+      </Link>
     </div>
   );
 };

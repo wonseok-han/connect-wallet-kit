@@ -1,4 +1,8 @@
 {
   "AA00": "Move",
-  "AA01": "hello"
+  "AA01": "hello",
+  "GREETING": "Hello, {{name}}!",
+  "COMBINATION": "{{word1}} and {{word2}} make a perfect combination.",
+  "TASK_STATUS": "You have completed {{count}} out of {{total}} tasks.",
+  "WELCOME_HTML": "Welcome, <strong>{{name}}</strong>!"
 }
