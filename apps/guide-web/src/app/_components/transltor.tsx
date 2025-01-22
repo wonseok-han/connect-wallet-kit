@@ -40,11 +40,22 @@ export default function Translator() {
       </div>
 
       <div className="flex gap-3">
-        <p>HTML 태그 포함 예제 👉</p>
+        <p>HTML 태그 포함 예제 (strong) 👉</p>
         <p>
           <Trans
             i18nKey="WELCOME_HTML"
             values={{ name: 'John' }}
+            components={{
+              strong: <strong style={{ color: 'blue' }} />,
+            }}
+          />
+        </p>
+      </div>
+      <div className="flex gap-3">
+        <p>HTML 태그 포함 예제 (br) 👉</p>
+        <p>
+          <Trans
+            i18nKey="WELCOME_BR"
             components={{
               strong: <strong style={{ color: 'blue' }} />,
             }}

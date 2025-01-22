@@ -4,5 +4,6 @@
   "GREETING": "Hello, {{name}}!",
   "COMBINATION": "{{word1}} and {{word2}} make a perfect combination.",
   "TASK_STATUS": "You have completed {{count}} out of {{total}} tasks.",
-  "WELCOME_HTML": "Welcome, <strong>{{name}}</strong>!"
+  "WELCOME_HTML": "Welcome, <strong>{{name}}</strong>!",
+  "WELCOME_BR": "Welcome, First line <br /> Second line <br /> Third line <br /> Forth line"
 }
